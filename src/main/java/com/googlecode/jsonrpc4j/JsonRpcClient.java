@@ -124,7 +124,7 @@ public class JsonRpcClient {
 		throws Throwable {
 
 		// invoke it
-		invoke(methodName, argument, ops, id);
+		invoke(methodName, argument, ops, id, null);
 
 		// read it
 		return readResponse(returnType, ips);
@@ -164,12 +164,13 @@ public class JsonRpcClient {
 	 * @param methodName the method to invoke
 	 * @param argument the arguments to pass to the method
 	 * @param ops the {@link OutputStream} to write to
+	 * @param extraArguments 
 	 * @throws IOException on error
 	 */
 	public void invoke(
-		String methodName, Object argument, OutputStream ops)
+		String methodName, Object argument, OutputStream ops, Map<String, String> extraArguments)
 		throws IOException {
-		invoke(methodName, argument, ops, random.nextLong()+"");
+		invoke(methodName, argument, ops, random.nextLong()+"", null);
 	}
 
 	/**
@@ -186,9 +187,9 @@ public class JsonRpcClient {
 	 * @throws IOException on error
 	 */
 	public void invoke(
-		String methodName, Object argument, OutputStream ops, String id)
+		String methodName, Object argument, OutputStream ops, String id, Object extraArguments)
 		throws IOException {
-		writeRequest(methodName, argument, ops, id);
+		writeRequest(methodName, argument, ops, id, extraArguments);
 		ops.flush();
 	}
 
@@ -206,7 +207,7 @@ public class JsonRpcClient {
 	public void invokeNotification(
 		String methodName, Object argument, OutputStream ops)
 		throws IOException {
-		writeRequest(methodName, argument, ops, null);
+		writeRequest(methodName, argument, ops, null,null);
 		ops.flush();
 	}
 
@@ -320,9 +321,9 @@ public class JsonRpcClient {
 	 * @throws IOException on error
 	 */
 	public void writeRequest(
-		String methodName, Object argument, OutputStream ops, String id)
+		String methodName, Object argument, OutputStream ops, String id, Object extraArguments)
 		throws IOException {
-		internalWriteRequest(methodName, argument, ops, id);
+		internalWriteRequest(methodName, argument, ops, id, extraArguments);
 	}
 
 	/**
@@ -338,7 +339,7 @@ public class JsonRpcClient {
 	public void writeNotification(
 		String methodName, Object argument, OutputStream ops)
 		throws IOException {
-		internalWriteRequest(methodName, argument, ops, null);
+		internalWriteRequest(methodName, argument, ops, null,null);
 	}
 
 	/**
@@ -349,8 +350,9 @@ public class JsonRpcClient {
 	 * @param id the optional id
 	 * @throws IOException on error
 	 */
+	@SuppressWarnings("unchecked")
 	private void internalWriteRequest(
-		String methodName, Object arguments, OutputStream ops, String id)
+		String methodName, Object arguments, OutputStream ops, String id, Object extraAttrs)
 		throws IOException {
 		
 		// create the request
@@ -402,6 +404,13 @@ public class JsonRpcClient {
 			request.put("params", mapper.valueToTree(arguments));
 		}
 
+       if (extraAttrs != null && Map.class.isInstance(extraAttrs)) {
+    	   Map<String,String> extraArguments = (Map<String, String>) extraAttrs;
+    	   for (String key :extraArguments.keySet()) {
+    		   request.put(key, extraArguments.get(key));
+    	   }
+       }
+		
 		// show to listener
 		if (this.requestListener!=null) {
 			this.requestListener.onBeforeRequestSent(this, request);

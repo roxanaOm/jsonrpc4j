@@ -85,7 +85,7 @@ public class JsonRpcHttpClient
 	 */
 	public void invoke(String methodName, Object argument)
 		throws Throwable {
-		invoke(methodName, argument, null, new HashMap<String, String>());
+		invoke(methodName, argument, null, new HashMap<String, String>(), new HashMap<String,String>());
 	}
 
 	/**
@@ -100,9 +100,9 @@ public class JsonRpcHttpClient
 	 * @throws Throwable on error
 	 */
 	public Object invoke(
-		String methodName, Object argument, Type returnType)
+		String methodName, Object argument, Type returnType, Map<String, String> extraArguments)
 		throws Throwable {
-		return invoke(methodName, argument, returnType, new HashMap<String, String>());
+		return invoke(methodName, argument, returnType, new HashMap<String, String>(),new HashMap<String, String>());
 	}
 
 	/**
@@ -118,9 +118,9 @@ public class JsonRpcHttpClient
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T invoke(
-		String methodName, Object argument, Class<T> clazz)
+		String methodName, Object argument, Class<T> clazz, Map<String, String> extraArguments)
 		throws Throwable {
-		return (T)invoke(methodName, argument, Type.class.cast(clazz));
+		return (T)invoke(methodName, argument, Type.class.cast(clazz), extraArguments);
 	}
 
 	/**
@@ -137,7 +137,7 @@ public class JsonRpcHttpClient
 	 */
 	public Object invoke(
 		String methodName, Object argument, Type returnType,
-		Map<String, String> extraHeaders)
+		Map<String, String> extraHeaders, Map<String,String> extraArguments)
 		throws Throwable {
 
 		// create URLConnection
@@ -147,7 +147,7 @@ public class JsonRpcHttpClient
 		// invoke it
 		OutputStream ops = con.getOutputStream();
 		try {
-			super.invoke(methodName, argument, ops);
+			super.invoke(methodName, argument, ops, extraArguments);
 		} finally {
 			ops.close();
 		}
@@ -202,9 +202,10 @@ public class JsonRpcHttpClient
 	@SuppressWarnings("unchecked")
 	public <T> T invoke(
 		String methodName, Object argument, Class<T> clazz,
-		Map<String, String> extraHeaders)
+		Map<String, String> extraHeaders,
+	    Map<String, String> extraArguments)
 		throws Throwable {
-		return (T)invoke(methodName, argument, Type.class.cast(clazz), extraHeaders);
+		return (T)invoke(methodName, argument, Type.class.cast(clazz), extraHeaders, extraArguments);
 	}
 
 	/**

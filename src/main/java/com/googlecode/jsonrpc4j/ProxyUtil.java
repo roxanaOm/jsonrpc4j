@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.web.method.annotation.MapMethodProcessor;
+
 /**
  * Utilities for create client proxies.
  */
@@ -180,7 +182,8 @@ public abstract class ProxyUtil {
 		Class<T> proxyInterface,
 		final boolean useNamedParams,
 		final JsonRpcHttpClient client,
-		final Map<String, String> extraHeaders) {
+		final Map<String, String> extraHeaders,
+		final Map<String,String> extraArguments) {
 
 		// create and return the proxy
 		return (T)Proxy.newProxyInstance(
@@ -194,7 +197,7 @@ public abstract class ProxyUtil {
 					}
 					Object arguments = ReflectionUtil.parseArguments(method, args, useNamedParams);
 					return client.invoke(
-						method.getName(), arguments, method.getGenericReturnType(), extraHeaders);
+						method.getName(), arguments, method.getGenericReturnType(), extraHeaders, extraArguments);
 				}
 			});
 	}
@@ -212,7 +215,7 @@ public abstract class ProxyUtil {
 		ClassLoader classLoader,
 		Class<T> proxyInterface,
 		final JsonRpcHttpClient client) {
-		return createClientProxy(classLoader, proxyInterface, false, client, new HashMap<String, String>());
+		return createClientProxy(classLoader, proxyInterface, false, client, new HashMap<String, String>(), new HashMap<String, String>());
 	}
 
 	private static Object proxyObjectMethods(Method method, Object proxyObject, Object[] args) {

@@ -42,11 +42,11 @@ public class JsonRpcClientTest {
 	public void testInvokeNoParams()
 		throws Throwable {
 		
-		client.invoke("test", new Object[0], baos);
+		client.invoke("test", new Object[0], baos,null);
 		JsonNode node = readJSON(baos);
 		assertFalse(node.has("params"));
 
-		client.invoke("test", (Object[])null, baos);
+		client.invoke("test", (Object[])null, baos, null);
 		node = readJSON(baos);
 		assertFalse(node.has("params"));
 	}
@@ -54,7 +54,7 @@ public class JsonRpcClientTest {
 	@Test
 	public void testInvokeArrayParams()
 		throws Throwable {
-		client.invoke("test", new Object[] { 1, 2 }, baos);
+		client.invoke("test", new Object[] { 1, 2 }, baos,null);
 		JsonNode node = readJSON(baos);
 
 		assertTrue(node.has("params"));
@@ -69,7 +69,7 @@ public class JsonRpcClientTest {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("hello", "Guvna");
 		params.put("x", 1);
-		client.invoke("test", params, baos);
+		client.invoke("test", params, baos, null);
 		JsonNode node = readJSON(baos);
 
 		assertTrue(node.has("params"));
@@ -78,4 +78,13 @@ public class JsonRpcClientTest {
 		assertEquals(1, node.get("params").get("x").intValue());
 	}
 
+	@Test
+	public void testInvokeExtraArguments() throws Throwable{
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("hello", "Guvna");
+		params.put("x", 1);
+		Map<String, String> extraArguments = new HashMap<String, String>();
+		extraArguments.put("auth", "1");
+		client.invoke("test", params, baos, extraArguments);
+	}
 }

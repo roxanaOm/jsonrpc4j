@@ -40,7 +40,9 @@ public class JsonProxyFactoryBean
 	private ObjectMapper		objectMapper		= null;
 	private JsonRpcHttpClient	jsonRpcHttpClient	= null;
 	private Map<String, String>	extraHttpHeaders	= new HashMap<String, String>();
+	private Map<String, String>	extraArguments	= new HashMap<String, String>();
 	private ApplicationContext	applicationContext;
+	
 
 	/**
 	 * {@inheritDoc}
@@ -103,7 +105,7 @@ public class JsonProxyFactoryBean
 		return jsonRpcHttpClient.invoke(
 			invocation.getMethod().getName(),
 			arguments,
-			retType, extraHttpHeaders);
+			retType, extraHttpHeaders, extraArguments);
 	}
 
 	/**
@@ -163,4 +165,9 @@ public class JsonProxyFactoryBean
 		this.useNamedParams = useNamedParams;
 	}
 
+	public void setExtraArguments(Map<String, String> extraArguments) {
+		this.extraArguments = extraArguments;
+	}
+
+	
 }
