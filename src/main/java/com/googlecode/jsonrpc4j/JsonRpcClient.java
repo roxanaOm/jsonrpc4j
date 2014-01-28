@@ -170,7 +170,7 @@ public class JsonRpcClient {
 	public void invoke(
 		String methodName, Object argument, OutputStream ops, Map<String, String> extraArguments)
 		throws IOException {
-		invoke(methodName, argument, ops, random.nextLong()+"", null);
+		invoke(methodName, argument, ops, random.nextLong()+"", extraArguments);
 	}
 
 	/**

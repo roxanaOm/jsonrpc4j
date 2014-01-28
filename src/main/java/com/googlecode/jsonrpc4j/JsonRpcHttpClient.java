@@ -102,7 +102,7 @@ public class JsonRpcHttpClient
 	public Object invoke(
 		String methodName, Object argument, Type returnType, Map<String, String> extraArguments)
 		throws Throwable {
-		return invoke(methodName, argument, returnType, new HashMap<String, String>(),new HashMap<String, String>());
+		return invoke(methodName, argument, returnType, new HashMap<String, String>(),extraArguments);
 	}
 
 	/**
